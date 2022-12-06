@@ -451,7 +451,7 @@ async def upload_receipts():
     ### ----------------------- post to cosmos with the analysis after performing ml----------------------- ###
     await add_receipt_items(receipt_items_to_create)
         
-    return redirect('/')
+    return receipt_items_to_create
 
 # flask endpoint to view receipt items of a user by query parameter
 @app.route("/view-user-receipt-items", methods=["GET"])
@@ -542,7 +542,7 @@ async def create_trends():
             await container_obj.create_item(body=prev_user_trends) 
             await container_obj.create_item(body=curr_user_trends) 
 
-            return redirect('/view-user-trends?user_id={}'.format(user_id))
+            return curr_user_trends
 
         except exceptions.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
