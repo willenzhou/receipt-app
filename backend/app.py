@@ -396,6 +396,7 @@ async def upload_receipts():
                             product_name = "undetermined"
                             product_price = "undetermined"
                             related_product = "undetermined"
+                            related_product_link = "undetermined"
                             for item_field_name, item_field in item.value.items():
                                 if item_field_name == 'Description':
                                     product_name = item_field.value
@@ -411,9 +412,13 @@ async def upload_receipts():
                                     print('jsonres', json_result)
                                     if len(json_result['search_results']) >= 2:
                                         related_product = json_result["search_results"][-1]["product"]["title"]
+                                        related_product_link = json_result["search_results"][-1]["product"]["link"]
                                 elif item_field_name == 'TotalPrice':
                                     product_price = item_field.value
-                            items.append((product_name, product_price, related_product))
+                            items.append({"product_name": product_name, 
+                            "product_price": product_price, 
+                            "related_product": related_product,
+                            "related_product_link": related_product_link})
                     elif name == "Total":
                         total_price = field.value
                     elif name == "Subtotal":
@@ -438,7 +443,8 @@ async def upload_receipts():
                 "total_price": total_price,
                 "subtotal": subtotal,
                 "tax": tax,
-                "purchase_date": purchase_date
+                "purchase_date": purchase_date,
+                "upload_date": str(datetime.now())
             }
 
             receipt_items_to_create.append(receipt_item)
