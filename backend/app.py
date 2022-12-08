@@ -296,46 +296,6 @@ except Exception as e:
     print("Creating container...")
     container_client = blob_service_client.create_container(container_name) # create a container in the storage account if it does not exist
 
-@app.route("/")
-def view_receipts():
-    blob_items = container_client.list_blobs() # list all the blobs in the container
-
-    img_html = "<div style='display: flex; justify-content: space-between; flex-wrap: wrap;'>"
-
-    for blob in blob_items:
-        blob_client = container_client.get_blob_client(blob=blob.name) # get blob client to interact with the blob and get blob url
-        img_html += "<img src='{}' width='auto' height='200' style='margin: 0.5em 0;'/>".format(blob_client.url) # get the blob url and append it to the html
-    
-    img_html += "</div>"
-
-    # return the html with the images
-    return """
-    <head>
-    <!-- CSS only -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="/">Receipt Interpreter App</a>
-            </div>
-        </nav>
-        <div class="container">
-            <div class="card" style="margin: 1em 0; padding: 1em 0 0 0; align-items: center;">
-                <h3>Upload new receipt</h3>
-                <div class="form-group">
-                    <form method="post" action="/upload-receipts" 
-                        enctype="multipart/form-data">
-                        <div style="display: flex;">
-                            <input type="file" accept=".png, .jpeg, .jpg, .gif" name="receipts" multiple class="form-control" style="margin-right: 1em;">
-                            <input type="submit" class="btn btn-dark">
-                        </div>
-                    </form>
-                </div> 
-            </div>
-    """ + img_html + "</div></body>"
-
-
 ml_endpoint = "https://receiptparser5412.cognitiveservices.azure.com/"
 ml_credential = AzureKeyCredential("bc47c289ba524ad5a95a911da7dec573")
 
@@ -350,7 +310,7 @@ async def upload_receipts():
     receipt_items_to_create = []
     filenames = ""
     #args = request.args 
-    user_id = 'Bob' #args.get('user_id') #TODO: change back
+    user_id = 'Bob' #args.get('user_id') #change back
 
     for file in request.files.getlist("receipts"):
         try:
@@ -363,7 +323,7 @@ async def upload_receipts():
             # testing
             print('start analyzing')
 
-            # option 1: somehow download receipt as jpg?
+            # option 1: somehow download receipt as jpg
             # with open("testreceipt.jpg", "rb") as fd:
             #     receipt = fd.read()
             # poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", receipt)
